@@ -19,10 +19,21 @@ from django.urls import path
 
 # my imports
 from boards.views import health
+from accounts.views import register, me
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # health
     path('api/health/', health),
+
+    # auth
+    path('api/auth/register/', register),
+    path('api/auth/jwt/create/', TokenObtainPairView.as_view()),
+    path('api/auth/jwt/refresh/', TokenRefreshView.as_view()),
+
+    # Current User / Me
+    path('api/me/', me),
 ]
