@@ -15,14 +15,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["id","title","description","position","column","label_ids","due_at","created_at","updated_at"]
+        fields = ["id","title","description","position","column","label_ids","due_at","created_at","updated_at",]
 
 
 class ColumnSerializer(serializers.ModelSerializer):
     tasks = TaskSerializer(many=True, read_only=True)
 
     class Meta:
-        tasks = Column
+        model = Column
         fields = ["id","name","position","tasks"]
     
 
