@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 # my imports
-from boards.views import health
+from boards.views import health, seed_board, list_boards
 from accounts.views import register, me
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -36,4 +36,8 @@ urlpatterns = [
 
     # Current User / Me
     path('api/me/', me),
+
+    # Boards
+    path("api/boards/seed/", seed_board),
+    path("api/boards/", list_boards),
 ]
