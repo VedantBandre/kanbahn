@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 # my imports
-from boards.views import health, seed_board, list_boards
+from boards.views import health, seed_board, list_boards, create_task, update_task, delete_task, reorder_tasks, get_board
 from accounts.views import register, me
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -40,4 +40,11 @@ urlpatterns = [
     # Boards
     path("api/boards/seed/", seed_board),
     path("api/boards/", list_boards),
+    path("api/boards/<int:pk>/", get_board),
+
+    # Tasks CRUD
+    path("api/tasks/", create_task), # POST
+    path("api/tasks/<int:pk>/", update_task), # PATCH/DELETE
+    path("api/tasks/<int:pk>/delete" , delete_task), # DELETE
+    path("api/tasks/reorder/", reorder_tasks), # POST
 ]
