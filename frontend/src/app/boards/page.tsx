@@ -5,24 +5,27 @@ import { useAuth } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
+import { useAuthReady } from "@/lib/useHydrated";
 
 type Board = { id: number; name: string };
 
 export default function BoardsPage() {
   const access = useAuth((s) => s.access);
+  const ready = useAuthReady();
   const router = useRouter();
 
   useEffect(() => {
-    if (!access) router.push("/login");
-  }, [access, router]);
+    if (ready && !access) router.push("/login");
+  }, [ready, access, router]);
 
   const q = useQuery({
     queryKey: ["boards"],
     queryFn: async () => (await api.get<Board[]>("/boards/")).data,
-    enabled: !!access,
+    enabled: ready && !!access,
   });
 
-  if (!access) return null;
+  if (!ready) return null;            // wait until token is loaded
+  if (!access) return null;           // redirecting
   if (q.isLoading) return <p>Loading…</p>;
   if (q.isError) return <p style={{ color: "red" }}>Failed to load boards.</p>;
 

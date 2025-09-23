@@ -3,22 +3,23 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/store";
-// import type { Board } from "@/lib/types";
-
-type Task = { id:number; title:string };
-type Column = { id:number; name:string; tasks: Task[] };
-type Board = { id:number; name:string; columns: Column[] };
+import type { Board } from "@/lib/types";
+import AddTask from "@/components/AddTask";
+import TaskItem from "@/components/TaskItem";
+import { useAuthReady } from "@/lib/useHydrated";
 
 export default function BoardDetailPage() {
   const { id } = useParams<{ id: string }>();
   const access = useAuth((s) => s.access);
+  const ready = useAuthReady();
 
   const q = useQuery({
     queryKey: ["board", id],
     queryFn: async () => (await api.get<Board>(`/boards/${id}/`)).data,
-    enabled: !!access && !!id,
+    enabled: ready && !!access && !!id,
   });
 
+  if (!ready) return null;
   if (!access) return <p>Please log in.</p>;
   if (q.isLoading) return <p>Loading…</p>;
   if (q.isError || !q.data) return <p style={{ color: "red" }}>Failed to load board.</p>;
@@ -32,10 +33,11 @@ export default function BoardDetailPage() {
             <h2 style={{ fontWeight: 600, marginBottom: 8 }}>{c.name}</h2>
             <ul style={{ display: "grid", gap: 8 }}>
               {c.tasks.map((t) => (
-                <li key={t.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 8 }}>{t.title}</li>
+                <TaskItem key={t.id} boardId={q.data.id} columnId={c.id} task={t} />
               ))}
               {c.tasks.length === 0 && <li style={{ opacity: 0.6, fontSize: 12 }}>No tasks</li>}
             </ul>
+            <AddTask boardId={q.data.id} columnId={c.id} />
           </div>
         ))}
       </div>
