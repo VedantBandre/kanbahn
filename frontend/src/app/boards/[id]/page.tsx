@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/store";
+// import type { Board } from "@/lib/types";
 
 type Task = { id:number; title:string };
 type Column = { id:number; name:string; tasks: Task[] };
